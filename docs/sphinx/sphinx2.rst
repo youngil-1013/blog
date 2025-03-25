@@ -19,11 +19,15 @@ If you wish to follow CodeRefinery's instructions, you can find them at `CodeRef
 
 Cloning the Repository and Github Actions Configuration
 -------------------------------------------------------
+
+  `Tip: remove all temporary files from Part 1 before proceeding`
+
 The first step is to clone the repository to your local machine. I highly recommend to start the python virtual environment as we have done in the :ref:`setupfor-ubuntu`. You can do this by running the following command in your terminal:
 
 .. code-block:: bash
 
   git clone <your-id>.github.io
+  cd <your-id>.github.io
 
 You will initially see that the repository is empty (or at best, has a README file). Now, you will need to create a Sphinx project in the repository. We have already done something similar in the previous section:
 
@@ -37,8 +41,8 @@ docs is the directory where Sphinx will look for the RST files. You can name thi
 
 .. code-block:: bash
 
+  cd ..
   echo "_build/" > .gitignore # Ignores the build directory
-  echo "docs/myenv/" >> .gitignore # If you are using a virtual environment
   echo ".vscode/" >> .gitignore # if you are using Visual Studio Code
 
 .ignore files are used to ignore files that you do not want to push to Github. Depending on which IDE you are using, you may want to add more files to the .gitignore file. Now, let us push the changes to GitHub:
@@ -49,6 +53,7 @@ docs is the directory where Sphinx will look for the RST files. You can name thi
   git commit -m "Initial commit"
   git push
 
+If you have an access error pop up after trying to push the changes, you may need to set up a Personal Access Token via GitHub and use the token as your password. 
 Your repository should now be uploaded to `github.com/<your-id>.<your-id>.github.io`. Mine is at `https://github.com/youngil-1013/youngil-1013.github.io <https://github.com/youngil-1013/youngil-1013.github.io>`_
 However, that's only the source code. We want to deploy the website. To do this, we will use Github Actions and Pages. First of all, you will need to create a .github directory in the root of your repository. This directory tells Github to run certain actions when you push to the repository.
 Then, create a workflows directory inside the .github directory, which lets us set up jobs that can be triggered when certain events occur. You can either use your file explorer to create these folders or use the following bash command:
@@ -144,8 +149,8 @@ Let's understand what this code does:
   
     * The action **force_orphan** is set to true, which means that the gh-pages branch will be overwritten every time the action is run.
 
-During a push, pull request, or manual trigger, you can check out what the job does at the Actions tab of the repository. There are two important sections to the deploy.yml file we have written.
-First, you must include all dependencies in the Sphinx project after the pip install command or you might see the following error message in the Actions tab after clicking on the job:
+During a push, pull request, or manual trigger, you can check out what the job does at the Actions tab of the repository. There is one important section to the deploy.yml file we have written.
+You must include all dependencies in the Sphinx project after the pip install command or you might see the following error message in the Actions tab after clicking on the job:
 
 .. code-block:: bash
 
@@ -158,11 +163,26 @@ First, you must include all dependencies in the Sphinx project after the pip ins
           ) from err
       sphinx.errors.ExtensionError: Could not import extension <package_name> (exception: No module named '<package_name>')
 
-Second, if you have named your directory something other than "docs", you will need to change the sphinx-build command to reflect this. For example, if you have named your directory "blog", you will need to change the command to:
+Sanity Testing
+~~~~~~~~~~~~~~
+
+Let's double check that your repository on GitHub has the following structure:
 
 .. code-block:: bash
 
-  sphinx-build blog _build
+  <your-id>.github.io/
+  ├── .github/
+  │   └── workflows/
+  │       └── deploy.yml
+  ├── docs/
+  │   ├── conf.py
+  │   ├── index.rst
+  │   ├── make.bat
+  │   └── Makefile
+  ├── .gitignore
+  └── README.md
+
+If not, you may need to go back and make changes to the repository. If you see any errors (Red X-marks) in the Actions tab, you can click on the error to see what went wrong. If the errors are anything other than the ones mentioned above, you are on your own here.
 
 Github Pages Configuration
 --------------------------
@@ -171,7 +191,7 @@ We're almost there. Right now, even if you push to the repository, you will not 
 
   `"Let perseverance finish its work so that you may be mature and complete, not lacking anything."`
 
-Let us now tell Github where to look for the website. Go to the repository **Settings** pages and find the **Pages** section. You will see a dropdown menu that says "None". Click on this and select the gh-pages branch. Then, select /(root) as the source. Then, press the **Save** button. Now, all is set!
+Let us now tell Github where to look for the website. Go to the repository **Settings** pages and find the **Pages** section. You will see a dropdown menu that says "None". Click on this and select the gh-pages branch (If this does not appear, check the Actions tab, as there might be errors). Then, select /(root) as the source. Then, press the **Save** button. Now, all is set!
 
 Now, push everything you have onto the repository. You can see your "website" live on the internet at `https://<your-id>.github.io/<repository-name>`. It usually takes a few seconds to a few minutes for the website to be live. If you see a 404 error even after waiting, check if the **Actions** tab has any errors. If you see an error, you can click on the error to see what went wrong.
 If the errors are anything other than the ones mentioned above, you are on your own here.
